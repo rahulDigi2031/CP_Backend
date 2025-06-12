@@ -1,76 +1,97 @@
-const Product = require('../models/Product');
+const Product = require('../models/Product'); // adjust path as necessary
 
-// Create a new product
 const addProduct = async (req, res) => {
   try {
-    const productData = req.body;
+    const { name, description, category,image, price, brand, inStock } = req.body;
+    // Validation (you can enhance this further)
+    if (!name || !description || !category || !image || price == null || !brand || inStock == null) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required',
+      });
+    }
 
-    const product = new Product(productData);
+    // Create a new product instance
+    const product = new Product({ name, description,category, price, brand, inStock, });
+
+    // Save to database
     const savedProduct = await product.save();
 
-    res.status(201).json({ success: true, data: savedProduct });
+    // Success response
+    res.status(201).json({success: true,data: savedProduct,});
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    // Error response
+    res.status(500).json({success: false, message: error.message,});
   }
 };
 
-// Get all products
-const getAllProducts = async (req, res) => {
-  try {
-    const products = await Product.find().populate('category').populate('reviews.user');
-
-    res.status(200).json({ success: true, data: products });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// Get product by ID
-const getProductById = async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id).populate('category').populate('reviews.user');
-
-    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
-
-    res.status(200).json({ success: true, data: product });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// Update product
 const updateProduct = async (req, res) => {
   try {
-    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
+    const { id } = req.params; // product ID from URL
+    const updates = req.body;  // fields to update
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Product ID is required',
+      });
+    }
+
+    // Find and update the product
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      { new: true, runValidators: true } // `new: true` returns the updated doc
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: updatedProduct,
     });
-
-    if (!updatedProduct) return res.status(404).json({ success: false, message: 'Product not found' });
-
-    res.status(200).json({ success: true, data: updatedProduct });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-// Delete product
 const deleteProduct = async (req, res) => {
   try {
-    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
 
-    if (!deletedProduct) return res.status(404).json({ success: false, message: 'Product not found' });
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Product ID is required',
+      });
+    }
 
-    res.status(200).json({ success: true, message: 'Product deleted successfully' });
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found',
+      });
+    }
+
+    res.status(200).json({ success: true, message: 'Product deleted successfully', data: deletedProduct,});
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-module.exports = {
-  addProduct,
-  getAllProducts,
-  getProductById,
-  updateProduct,
-  deleteProduct
-};
+
+
+module.exports = {addProduct , updateProduct , deleteProduct};

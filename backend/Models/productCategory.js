@@ -5,7 +5,7 @@ const categorySchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    enum: ['Tablet', 'Capsule', 'Injection', 'Syrup', 'EarDrops' , 'EyeDrops'],
+    enum: ['Tablet', 'Capsule', 'Injection', 'Syrup', 'EarDrops' , 'EyeDrops' , 'cream' , 'soap'],
     trim: true
   },
   description: {
