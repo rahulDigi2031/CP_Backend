@@ -1,134 +1,152 @@
-const Product = require('../models/Product'); // adjust path as necessary
+const Product = require('../models/Product');
+const { formatDate } = require('../middleware/formatDate');
 
 const addProduct = async (req, res) => {
+  const {productName, tradeNames, strength, packing,packInsertAvailable,therapeuticUse,productionCapacity, imageUrl,description,category } = req.body;
+
   try {
-    const { name, description, category,image, price, brand, inStock } = req.body;
-    // Validation (you can enhance this further)
-    if (!name || !description || !category || !image || price == null || !brand || inStock == null) {
-      return res.status(400).json({
-        success: false,
-        message: 'All fields are required',
-      });
+    if (!productName || productName.trim().length === 0) {
+      return res.status(400).json({ message: "Product name is required." });
     }
 
-    // Create a new product instance
-    const product = new Product({ name, description,category, price, brand, inStock, });
+    if (!tradeNames || !Array.isArray(tradeNames) || tradeNames.length === 0) {
+      return res.status(400).json({ message: "At least one trade name is required." });
+    }
 
-    // Save to database
+    if (!strength || strength.trim().length === 0) {
+      return res.status(400).json({ message: "Strength is required." });
+    }
+
+    if (!packing || packing.trim().length === 0) {
+      return res.status(400).json({ message: "Packing information is required." });
+    }
+
+    if (!therapeuticUse || therapeuticUse.trim().length === 0) {
+      return res.status(400).json({ message: "Therapeutic use is required." });
+    }
+
+    if (!productionCapacity || productionCapacity.trim().length === 0) {
+      return res.status(400).json({ message: "Production capacity is required." });
+    }
+
+    if (!imageUrl || imageUrl.trim().length === 0) {
+      return res.status(400).json({ message: "Image URL is required." });
+    }
+
+    const urlRegex = /^(http|https):\/\/[^ "]+$/;
+    if (!urlRegex.test(imageUrl)) {
+      return res.status(400).json({ message: "Invalid image URL format." });
+    }
+
+    if (!description || description.trim().length === 0) {
+      return res.status(400).json({ message: "Description is required." });
+    }
+
+    if (!category || category.trim().length === 0) {
+      return res.status(400).json({ message: "Category ID is required." });
+    }
+
+    const product = new Product({ productName,tradeNames, strength, packing, packInsertAvailable: packInsertAvailable ?? false,therapeuticUse,productionCapacity,
+      imageUrl,
+      description,
+      category,
+      createdAt: formatDate(),
+      updatedAt: formatDate(),
+    });
+
     const savedProduct = await product.save();
 
-    // Success response
-    res.status(201).json({success: true,data: savedProduct,});
+    res.status(201).json({message: "Product added successfully.", product: savedProduct});
+
   } catch (error) {
-    // Error response
-    res.status(500).json({success: false, message: error.message,});
+    res.status(500).json({ message: error.message });
   }
 };
 
-const updateProduct = async (req, res) => {
+// ************ get all products ************ //
+const getAllProducts = async (req, res) => {
   try {
-    const { id } = req.params; // product ID from URL
-    const updates = req.body;  // fields to update
+    const products = await Product.find().populate('category');
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-    if (!id) {
-      return res.status(400).json({
-        success: false,
-        message: 'Product ID is required',
-      });
+// ************ get product by id ************ //
+const getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await Product.findById(id).populate('category');
+
+    if (!product) {
+      return res.status(404).json({success: false, message: 'Product not found.'});
     }
 
-    // Find and update the product
-    const updatedProduct = await Product.findByIdAndUpdate(
-      id,
-      { $set: updates },
-      { new: true, runValidators: true } // `new: true` returns the updated doc
-    );
+    res.status(200).json({data: product,});
+
+  } catch (error) {
+     res.status(500).json({message: error.message,});
+  }
+};
+
+// ************ update product ************ //
+const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = { ...req.body, updatedAt: formatDate() };
+
+    const requiredFields = [
+      'productName', 'tradeNames', 'strength', 'packing',
+      'therapeuticUse', 'productionCapacity', 'imageUrl',
+      'description', 'category'
+    ];
+
+    for (let field of requiredFields) {
+      if (!updates[field]) {
+        return res.status(400).json({message: `${field} is required.` });
+      }
+    }
+
+    // Optional field fallback
+    if (updates.packInsertAvailable === undefined) {
+      updates.packInsertAvailable = false;
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(id, updates, { new: true });
 
     if (!updatedProduct) {
-      return res.status(404).json({
-        success: false,
-        message: 'Product not found',
-      });
+      return res.status(404).json({message: "Product not found." });
     }
 
     res.status(200).json({
       success: true,
-      data: updatedProduct,
+      message: "Product updated successfully.",
+      data: updatedProduct
     });
+
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({message: error.message });
   }
 };
 
+// *************** delete product *************** //
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!id) {
-      return res.status(400).json({
-        success: false,
-        message: 'Product ID is required',
-      });
-    }
-
     const deletedProduct = await Product.findByIdAndDelete(id);
 
     if (!deletedProduct) {
-      return res.status(404).json({
-        success: false,
-        message: 'Product not found',
-      });
+      return res.status(404).json({ message: 'Product not found.',});
     }
 
-    res.status(200).json({ success: true, message: 'Product deleted successfully', data: deletedProduct,});
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-const getAllProducts = async (req, res) => {
-  try {
-    const products = await Product.find(); // fetch all products
+    res.status(200).json({message: 'Product deleted successfully.',data: deletedProduct,});
 
-    res.status(200).json({
-      success: true,
-      count: products.length,
-      data: products,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-const getSingleProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const product = await Product.findById(id);
-    if (!product) {
-      return res.status(404).json({success: false, message: 'Product not found'});
-    }
-
-    res.status(200).json({
-      success: true,
-      data: product,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+  } catch (error) {res.status(500).json({message: error.message,});
   }
 };
 
 
-
-
-module.exports = {addProduct , updateProduct , deleteProduct ,getAllProducts , getSingleProduct};
+module.exports = { addProduct , getAllProducts , updateProduct, deleteProduct , getProductById};
