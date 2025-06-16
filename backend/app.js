@@ -3,15 +3,17 @@ const app = express();
 const dotenv = require('dotenv')
 dotenv.config()
 const connectDB = require('./db');
-const AuthRoute = require('./routes/usersRoute');
 const cookieParser = require('cookie-parser');
-const Productroute = require('./routes/productRoute');
+const ProductRoute = require('./routes/productRoute');
+const AuthRoute = require('./routes/usersRoute');
 app.use(cookieParser());
+
 
 // view engine setup
 app.use(express.json({limit:"4mb"}));
 app.use('/auth/', AuthRoute);
-app.use('/product/' , Productroute)
+app.use('/product/' , ProductRoute)
+
 
 
 // error handler

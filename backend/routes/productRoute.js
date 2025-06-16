@@ -1,19 +1,20 @@
 const express = require('express');
-const Productroute = express.Router();
+const ProductRoute = express.Router();
+const { authorizePermissions } = require('../middleware/authorizePermissions.js');
+const { authenticateUser } = require('../middleware/authenticateUser.js');
+const { addProduct, updateProduct, deleteProduct, getProductById, getAllProducts } = require('../Controller/ProductController.js');
+const upload = require('../middleware/uploaderimage.js');
 
-const {createProduct,getProductById,updateProduct, deleteProduct,getAllProducts} = require('../controllers/productController');
 
-const { authorizePermissions } = require('../middleware/authorizePermissions');
-const { authenticateUser } = require('../middleware/authenticateUser');
 
 
 // ---------- Public Routes ----------
-Productroute.get('/products/:id', getProductById);
-Productroute.get('/products', getAllProducts);
+ProductRoute.get('/product/:id', getProductById);
+ProductRoute.get('/products', getAllProducts);
 
 // ---------- Protected Routes ----------
-Productroute.post('/add', authenticateUser, authorizePermissions('admin'), createProduct);
-Productroute.put('/products/:id', authenticateUser, authorizePermissions('admin'), updateProduct);
-Productroute.delete('/products/:id', authenticateUser, authorizePermissions('admin'), deleteProduct);
+ProductRoute.post('/add', authenticateUser, authorizePermissions('admin'),upload.single('imageUrl') , addProduct);
+ProductRoute.put('/products/:id', authenticateUser, authorizePermissions('admin'), updateProduct);
+ProductRoute.delete('/products/:id', authenticateUser, authorizePermissions('admin'), deleteProduct);
 
-module.exports = Productroute;
+module.exports = ProductRoute;

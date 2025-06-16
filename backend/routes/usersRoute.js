@@ -1,12 +1,12 @@
 const express = require('express');
 const AuthRoute = express.Router();
 
-const {getAllUsers, getUserById, deleteUserById, Signup, Login, ChangePassword} = require('../Controller/UserController');
+const {getAllUsers, getUserById, deleteUserById, Signup, Login, ChangePassword} = require('../Controller/UserController.js');
 
-const { authorizePermissions } = require('../middleware/authorizePermissions');
-const { authenticateUser } = require('../middleware/authenticateUser');
+const { authorizePermissions } = require('../middleware/authorizePermissions.js');
+const { authenticateUser } = require('../middleware/authenticateUser.js');
 
-// ---------- Public Routes ----------
+// ---------- Publi Routes ----------
 AuthRoute.post('/signup', Signup);
 AuthRoute.post('/login', Login);
 

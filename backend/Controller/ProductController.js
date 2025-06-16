@@ -1,50 +1,61 @@
-const Product = require('../models/Product');
+const Product = require('../Models/product');
 const { formatDate } = require('../middleware/formatDate');
+const fs = require('fs');
+const path = require('path');
 
 const addProduct = async (req, res) => {
   const {productName, tradeNames, strength, packing,packInsertAvailable,therapeuticUse,productionCapacity, imageUrl,description,category } = req.body;
 
   try {
-    if (!productName || productName.trim().length === 0) {
-      return res.status(400).json({ message: "Product name is required." });
-    }
+    // if (!productName || productName.trim().length === 0) {
+    //   return res.status(400).json({ message: "Product name is required." });
+    // }
 
-    if (!tradeNames || !Array.isArray(tradeNames) || tradeNames.length === 0) {
-      return res.status(400).json({ message: "At least one trade name is required." });
-    }
+    if (!Array.isArray(tradeNames)) {
+  tradeNames = tradeNames ? [tradeNames] : [];
+}
 
-    if (!strength || strength.trim().length === 0) {
-      return res.status(400).json({ message: "Strength is required." });
-    }
+// if (tradeNames.length === 0) {
+//   return res.status(400).json({ message: "At least one trade name is required." });
+// }
 
-    if (!packing || packing.trim().length === 0) {
-      return res.status(400).json({ message: "Packing information is required." });
-    }
+//     if (!strength || strength.trim().length === 0) {
+//       return res.status(400).json({ message: "Strength is required." });
+//     }
 
-    if (!therapeuticUse || therapeuticUse.trim().length === 0) {
-      return res.status(400).json({ message: "Therapeutic use is required." });
-    }
+//     if (!packing || packing.trim().length === 0) {
+//       return res.status(400).json({ message: "Packing information is required." });
+//     }
 
-    if (!productionCapacity || productionCapacity.trim().length === 0) {
-      return res.status(400).json({ message: "Production capacity is required." });
-    }
+//     if (!therapeuticUse || therapeuticUse.trim().length === 0) {
+//       return res.status(400).json({ message: "Therapeutic use is required." });
+//     }
 
-    if (!imageUrl || imageUrl.trim().length === 0) {
-      return res.status(400).json({ message: "Image URL is required." });
-    }
+//     if (!productionCapacity || productionCapacity.trim().length === 0) {
+//       return res.status(400).json({ message: "Production capacity is required." });
+//     }
 
-    const urlRegex = /^(http|https):\/\/[^ "]+$/;
-    if (!urlRegex.test(imageUrl)) {
-      return res.status(400).json({ message: "Invalid image URL format." });
-    }
+//      if (!req.file) {
+//       return res.status(400).json({ message: "Product image is required." });
+//     }
 
-    if (!description || description.trim().length === 0) {
-      return res.status(400).json({ message: "Description is required." });
-    }
+//     const urlRegex = /^(http|https):\/\/[^ "]+$/;
+//     if (!urlRegex.test(imageUrl)) {
+//       return res.status(400).json({ message: "Invalid image URL format." });
+//     }
 
-    if (!category || category.trim().length === 0) {
-      return res.status(400).json({ message: "Category ID is required." });
-    }
+//     if (!description || description.trim().length === 0) {
+//       return res.status(400).json({ message: "Description is required." });
+//     }
+
+//     if (!category || category.trim().length === 0) {
+//       return res.status(400).json({ message: "Category ID is required." });
+//     }
+
+    const uniqueName = Date.now() + '-' + req.file.originalname;
+    const imagePath = path.join(__dirname, '..', 'uploads', uniqueName);
+    fs.writeFileSync(imagePath, req.file.buffer);
+    const imageUrl = `/uploads/${uniqueName}`;
 
     const product = new Product({ productName,tradeNames, strength, packing, packInsertAvailable: packInsertAvailable ?? false,therapeuticUse,productionCapacity,
       imageUrl,
