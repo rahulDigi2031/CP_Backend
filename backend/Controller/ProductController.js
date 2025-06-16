@@ -1,19 +1,19 @@
 const Product = require('../Models/product');
 const { formatDate } = require('../middleware/formatDate');
-const fs = require('fs');
-const path = require('path');
 
 const addProduct = async (req, res) => {
-  const {productName, tradeNames, strength, packing,packInsertAvailable,therapeuticUse,productionCapacity, imageUrl,description,category } = req.body;
+  // const {productName, tradeNames, strength, packing,packInsertAvailable,therapeuticUse,productionCapacity, imageUrl,description,category } = req.body;
+  const {imageUrl} = req.body
 
+  console.log(imageUrl);
   try {
-    // if (!productName || productName.trim().length === 0) {
-    //   return res.status(400).json({ message: "Product name is required." });
-    // }
+  //  if (!productName || productName.trim().length === 0) {
+  //     return res.status(400).json({ message: "Product name is required." });
+  //   } 
 
-    if (!Array.isArray(tradeNames)) {
-  tradeNames = tradeNames ? [tradeNames] : [];
-}
+//     if (!Array.isArray(tradeNames)) {
+//   tradeNames = tradeNames ? [tradeNames] : [];
+// }
 
 // if (tradeNames.length === 0) {
 //   return res.status(400).json({ message: "At least one trade name is required." });
@@ -35,9 +35,9 @@ const addProduct = async (req, res) => {
 //       return res.status(400).json({ message: "Production capacity is required." });
 //     }
 
-//      if (!req.file) {
-//       return res.status(400).json({ message: "Product image is required." });
-//     }
+     if (!req.file) {
+      return res.status(400).json({ message: "Product image is required." });
+    }
 
 //     const urlRegex = /^(http|https):\/\/[^ "]+$/;
 //     if (!urlRegex.test(imageUrl)) {
@@ -52,11 +52,6 @@ const addProduct = async (req, res) => {
 //       return res.status(400).json({ message: "Category ID is required." });
 //     }
 
-    const uniqueName = Date.now() + '-' + req.file.originalname;
-    const imagePath = path.join(__dirname, '..', 'uploads', uniqueName);
-    fs.writeFileSync(imagePath, req.file.buffer);
-    const imageUrl = `/uploads/${uniqueName}`;
-
     const product = new Product({ productName,tradeNames, strength, packing, packInsertAvailable: packInsertAvailable ?? false,therapeuticUse,productionCapacity,
       imageUrl,
       description,
@@ -64,6 +59,7 @@ const addProduct = async (req, res) => {
       createdAt: formatDate(),
       updatedAt: formatDate(),
     });
+
 
     const savedProduct = await product.save();
 
