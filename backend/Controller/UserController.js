@@ -160,6 +160,31 @@ const deleteUserById = async (req, res) => {
   }
 };
 
+// Update User by ID (admin only)
+const updateUserById = async (req, res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: req.body, // Updates only fields provided in req.body
+      },
+      { new: true, runValidators: true } // Return updated doc & validate schema
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "User updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports = {
   Signup,
   getAllUsers,
@@ -167,4 +192,5 @@ module.exports = {
   getUserById,
   Login,
   ChangePassword,
+  updateUserById
 };

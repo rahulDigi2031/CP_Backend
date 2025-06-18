@@ -2,10 +2,10 @@ const Product = require('../Models/product');
 const { formatDate } = require('../middleware/formatDate');
 
 const addProduct = async (req, res) => {
-  // const {productName, tradeNames, strength, packing,packInsertAvailable,therapeuticUse,productionCapacity, imageUrl,description,category } = req.body;
-  const {imageUrl} = req.body
+  const {productName, tradeNames, strength, packing,packInsertAvailable,therapeuticUse,productionCapacity,description,category } = req.body;
+  // const image = req.file;
+  // console.log(req.file)
 
-  console.log(imageUrl);
   try {
   //  if (!productName || productName.trim().length === 0) {
   //     return res.status(400).json({ message: "Product name is required." });
@@ -35,24 +35,21 @@ const addProduct = async (req, res) => {
 //       return res.status(400).json({ message: "Production capacity is required." });
 //     }
 
-     if (!req.file) {
-      return res.status(400).json({ message: "Product image is required." });
-    }
+    //  if (!req.file) {
+    //   return res.status(400).json({ message: "Product image is required." });
+    // }
 
-//     const urlRegex = /^(http|https):\/\/[^ "]+$/;
-//     if (!urlRegex.test(imageUrl)) {
-//       return res.status(400).json({ message: "Invalid image URL format." });
-//     }
+    // Create imageUrl from the uploaded file
+    const imageUrl = `/uploads/${req.file.filename}`;
 
-//     if (!description || description.trim().length === 0) {
-//       return res.status(400).json({ message: "Description is required." });
-//     }
-
-//     if (!category || category.trim().length === 0) {
-//       return res.status(400).json({ message: "Category ID is required." });
-//     }
-
-    const product = new Product({ productName,tradeNames, strength, packing, packInsertAvailable: packInsertAvailable ?? false,therapeuticUse,productionCapacity,
+    const product = new Product({
+      productName,
+      tradeNames,
+      strength,
+      packing,
+      packInsertAvailable: packInsertAvailable ?? false,
+      therapeuticUse,
+      productionCapacity,
       imageUrl,
       description,
       category,
@@ -60,10 +57,12 @@ const addProduct = async (req, res) => {
       updatedAt: formatDate(),
     });
 
-
     const savedProduct = await product.save();
 
-    res.status(201).json({message: "Product added successfully.", product: savedProduct});
+    res.status(201).json({
+      message: "Product added successfully.",
+      product: savedProduct
+    });
 
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -103,23 +102,6 @@ const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = { ...req.body, updatedAt: formatDate() };
-
-    const requiredFields = [
-      'productName', 'tradeNames', 'strength', 'packing',
-      'therapeuticUse', 'productionCapacity', 'imageUrl',
-      'description', 'category'
-    ];
-
-    for (let field of requiredFields) {
-      if (!updates[field]) {
-        return res.status(400).json({message: `${field} is required.` });
-      }
-    }
-
-    // Optional field fallback
-    if (updates.packInsertAvailable === undefined) {
-      updates.packInsertAvailable = false;
-    }
 
     const updatedProduct = await Product.findByIdAndUpdate(id, updates, { new: true });
 

@@ -12,7 +12,7 @@ const categorySchema = new mongoose.Schema({
     type: String,
     default: ''
   },
-  createdAt: { type: String }, // formatted string
+  createdAt: { type: String }, 
   updatedAt: { type: String }
 });
 
