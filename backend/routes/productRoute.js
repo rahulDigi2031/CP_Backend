@@ -7,30 +7,21 @@ const { addProduct, updateProduct, deleteProduct, getProductById, getAllProducts
 const multer = require('multer');
 const path = require('path');
 
+
 // Configure storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/');
     },
     filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const uniqueSuffix = Date.now();
         cb(null, uniqueSuffix + path.extname(file.originalname));
     }
 });
 
-// File filter function
-// const fileFilter = (req, file, cb) => {
-//     // Accept images only
-//     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-//         return cb(new Error('Only image files are allowed!'), false);
-//     }
-//     cb(null, true);
-// };
-
 // Configure multer
 const upload = multer({storage});
 
-// Error handling middleware for multer
 // const handleMulterError = (err, req, res, next) => {
 //     if (err instanceof multer.MulterError) {
 //         if (err.code === 'LIMIT_FILE_SIZE') {
@@ -48,12 +39,11 @@ ProductRoute.get('/products', getAllProducts);
 // ---------- Protected Routes ----------
 ProductRoute.post('/add', 
     authenticateUser, 
-    authorizePermissions('admin'),
+    authorizePermissions('admin' , 'product_manager'),
     upload.single('image'),
-    // handleMulterError,
     addProduct
 );
-ProductRoute.patch('/edit/:id', authenticateUser, authorizePermissions('admin'), updateProduct);
-ProductRoute.delete('/delete/:id', authenticateUser, authorizePermissions('admin'), deleteProduct);
+ProductRoute.patch('/edit/:id', authenticateUser, authorizePermissions('admin' , 'product_manager'), updateProduct);
+ProductRoute.delete('/delete/:id', authenticateUser, authorizePermissions('admin' , 'product_manager'), deleteProduct);
 
 module.exports = ProductRoute;

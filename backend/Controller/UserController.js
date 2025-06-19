@@ -151,7 +151,7 @@ const getUserById = async (req, res) => {
 // Delete user by ID (admin only)
 const deleteUserById = async (req, res) => {
   try {
-    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    const deletedUser = await User.findByIdAndDelete(req.params._id);
     if (!deletedUser)
       return res.status(404).json({ message: "User not found" });
     res.status(200).json({ message: "User deleted successfully" });
@@ -184,6 +184,24 @@ const updateUserById = async (req, res) => {
   }
 };
 
+// grant-access to aother user exmaple prod_manager 
+const grantProductAccess = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.role = "product_manager"; // Assign role to allow product addition
+    await user.save();
+
+    res.status(200).json({ message: "Access granted to add products" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 
 module.exports = {
   Signup,
@@ -192,5 +210,6 @@ module.exports = {
   getUserById,
   Login,
   ChangePassword,
-  updateUserById
+  updateUserById,
+  grantProductAccess
 };
