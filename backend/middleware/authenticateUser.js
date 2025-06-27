@@ -9,9 +9,11 @@ const authenticateUser = async (req, res, next) => {
       return res.status(401).json({ success: false, message: "Access denied. No token provided." });
     }
 
+
     // Verify token
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
     const user = await User.findById(decoded.userId).select("-password");
+    
 
     if (!user) {
       return res.status(401).json({ success: false, message: "Invalid token or user not found." });

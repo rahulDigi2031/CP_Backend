@@ -11,11 +11,12 @@ const status =  require('express-status-monitor')
 
 app.use(cookieParser());
 app.use(status())
+app.use(express.static('uploads'));
 
 
 // view engine setup
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin:'http://localhost:3000',
   credentials: true,
   methods:["get" , "post" , "patch" , "delete"]
 }))
@@ -29,7 +30,7 @@ app.use('/product/' , ProductRoute)
 app.listen(process.env.PORT , async()=> {
   try {
       await connectDB()
-      console.log(`server is running on port http://localhost:${process.env.PORT}/`)
+      console.log(`server is running on port ${process.env.PORT}`)
   } catch (error) {
     console.log(error);
   }

@@ -19,7 +19,9 @@ AuthRoute.get('/users/:id', authenticateUser,authorizePermissions('admin'), getU
 AuthRoute.delete('/delete/:id', authenticateUser,authorizePermissions('admin'), deleteUserById);
 AuthRoute.patch('/edit/:id' , authenticateUser , updateUserById)
 
+
 // ------------Admin gives access to another user for product add----------------
 AuthRoute.post("/grant-access", authenticateUser, authorizePermissions("admin"), grantProductAccess);
+
 
 module.exports = AuthRoute;

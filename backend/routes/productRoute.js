@@ -22,28 +22,21 @@ const storage = multer.diskStorage({
 // Configure multer
 const upload = multer({storage});
 
-// const handleMulterError = (err, req, res, next) => {
-//     if (err instanceof multer.MulterError) {
-//         if (err.code === 'LIMIT_FILE_SIZE') {
-//             return res.status(400).json({ message: 'File size too large. Maximum size is 5MB.' });
-//         }
-//         return res.status(400).json({ message: err.message });
-//     }
-//     next(err);
-// };
-
 // ---------- Public Routes ----------
-ProductRoute.get('/product/:id', getProductById);
-ProductRoute.get('/products', getAllProducts);
+
+ProductRoute.get('/singleproduct/:id', getProductById);
+ProductRoute.get('/getall', getAllProducts);
 
 // ---------- Protected Routes ----------
+
 ProductRoute.post('/add', 
     authenticateUser, 
     authorizePermissions('admin' , 'product_manager'),
     upload.single('image'),
     addProduct
 );
-ProductRoute.patch('/edit/:id', authenticateUser, authorizePermissions('admin' , 'product_manager'), updateProduct);
-ProductRoute.delete('/delete/:id', authenticateUser, authorizePermissions('admin' , 'product_manager'), deleteProduct);
+
+ProductRoute.patch('/edit/:id', authenticateUser, authorizePermissions('admin'), updateProduct);   
+ProductRoute.delete('/delete/:id', authenticateUser, authorizePermissions('admin'), deleteProduct);  
 
 module.exports = ProductRoute;
