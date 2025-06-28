@@ -2,7 +2,7 @@ const Product = require('../Models/product');
 const { formatDate } = require('../middleware/formatDate');
 
 const addProduct = async (req, res) => {
-  const {productName, tradeNames, strength, packing,packInsertAvailable,therapeuticUse,productionCapacity,description,category } = req.body;
+  const {productName, tradeNames, strength, packing,packInsertAvailable,therapeuticUse,productionCapacity,description,Price,category } = req.body;
   // const image = req.file;
   // console.log(req.file)
 
@@ -15,9 +15,13 @@ const addProduct = async (req, res) => {
 //   tradeNames = tradeNames ? [tradeNames] : [];
 // }
 
+
+
 // if (tradeNames.length === 0) {
 //   return res.status(400).json({ message: "At least one trade name is required." });
 // }
+
+  
 
 //     if (!strength || strength.trim().length === 0) {
 //       return res.status(400).json({ message: "Strength is required." });
@@ -52,6 +56,7 @@ const addProduct = async (req, res) => {
       productionCapacity,
       imageUrl,
       description,
+      Price,
       category,
       createdAt: formatDate(),
       updatedAt: formatDate(),

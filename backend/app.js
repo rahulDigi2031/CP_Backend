@@ -13,7 +13,6 @@ app.use(cookieParser());
 app.use(status())
 app.use(express.static('uploads'));
 
-
 // view engine setup
 app.use(cors({
   origin:'http://localhost:3000',

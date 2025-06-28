@@ -10,7 +10,8 @@ const productSchema = new mongoose.Schema({
   productionCapacity: { type: String, required: true },
   imageUrl: { type: String, required: true },
   description: { type: String, required: true },
-  category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
+  Price:{type:Number ,required: true},
+  category: { type: String,required: true},
   createdAt: { type: String, required: true },
   updatedAt: { type: String, required: true }
 });
