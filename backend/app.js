@@ -24,7 +24,6 @@ app.use('/auth/', AuthRoute);
 app.use('/product/' , ProductRoute)
 
 
-
 // error handler
 app.listen(process.env.PORT , async()=> {
   try {

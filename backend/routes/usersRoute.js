@@ -17,11 +17,10 @@ AuthRoute.put('/change-password', authenticateUser, ChangePassword);
 AuthRoute.get('/users', authenticateUser,authorizePermissions('admin'), getAllUsers);
 AuthRoute.get('/users/:id', authenticateUser,authorizePermissions('admin'), getUserById);
 AuthRoute.delete('/delete/:id', authenticateUser,authorizePermissions('admin'), deleteUserById);
-AuthRoute.patch('/edit/:id' , authenticateUser , updateUserById)
+AuthRoute.patch('/edit/:id' , authenticateUser, updateUserById)
 
 
 // ------------Admin gives access to another user for product add----------------
-AuthRoute.post("/grant-access", authenticateUser, authorizePermissions("admin"), grantProductAccess);
-
+AuthRoute.post("/grant-access/:id",authenticateUser,authorizePermissions("admin"),grantProductAccess);
 
 module.exports = AuthRoute;

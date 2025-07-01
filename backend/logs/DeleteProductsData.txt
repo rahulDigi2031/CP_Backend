@@ -1,0 +1,40 @@
+
+[2025-07-01T14:59:12.712Z] Deleted Product:
+{
+  "_id": "6852dca0fcec0ef2c972b841",
+  "productName": "amoxy500",
+  "tradeNames": [
+    "paradol"
+  ],
+  "strength": "para500mg",
+  "packing": "10*10",
+  "packInsertAvailable": true,
+  "therapeuticUse": "Fever and pain relief",
+  "productionCapacity": "10000 packs/day",
+  "imageUrl": "/uploads/1750260896906-448266389.webp",
+  "description": "Used for pain relief and fever reduction",
+  "category": "665a123abc9e54e0ef3a4567",
+  "createdAt": "18-06-2025 21:04",
+  "updatedAt": "18-06-2025 21:04",
+  "__v": 0
+}
+
+[2025-07-01T15:00:15.132Z] Deleted Product:
+{
+  "_id": "68541e3c50e5465d0e396628",
+  "productName": "aceclofenac 200mg",
+  "tradeNames": [
+    "acetol"
+  ],
+  "strength": "500mg",
+  "packing": "10 tablet per strip , 10 strips per Box",
+  "packInsertAvailable": true,
+  "therapeuticUse": "Used for cold and Cough relief and reduction, Antibacterial and Antiviral Properties",
+  "productionCapacity": "10000 packs/day",
+  "imageUrl": "/uploads/1750343228195.webp",
+  "description": "Used for cold and Cough relief and reduction, Antibacterial and Antiviral Properties",
+  "category": "665a123abc9e54e0ef3a4567",
+  "createdAt": "19-06-2025 19:57",
+  "updatedAt": "19-06-2025 19:57",
+  "__v": 0
+}

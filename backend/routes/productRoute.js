@@ -29,14 +29,10 @@ ProductRoute.get('/getall', getAllProducts);
 
 // ---------- Protected Routes ----------
 
-ProductRoute.post('/add', 
-    authenticateUser, 
-    authorizePermissions('admin' , 'product_manager'),
-    upload.single('image'),
-    addProduct
-);
+ProductRoute.post("/add",authenticateUser,authorizePermissions("admin", "productManager"), addProduct);
 
-ProductRoute.patch('/edit/:id', authenticateUser, authorizePermissions('admin'), updateProduct);   
-ProductRoute.delete('/delete/:id', authenticateUser, authorizePermissions('admin'), deleteProduct);  
+ProductRoute.put("/update/:id",authenticateUser,authorizePermissions("admin", "productManager"),updateProduct);
+
+ProductRoute.delete("/delete/:id",authenticateUser,authorizePermissions("admin", "productManager"),deleteProduct);
 
 module.exports = ProductRoute;

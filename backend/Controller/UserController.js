@@ -185,23 +185,22 @@ const updateUserById = async (req, res) => {
 };
 
 // grant-access to aother user exmaple prod_manager 
+
 const grantProductAccess = async (req, res) => {
   try {
-    const  userId  = req.params;
-    console.log(userId)
+    const userId = req.params.id;
     const user = await User.findById(userId);
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    user.role = "product_manager"; // Assign role to allow product addition
+    user.role = "productManager"; 
     await user.save();
 
-    res.status(200).json({ message: "Access granted to add products" });
+    res.status(200).json({ message: "Access granted: user is now a productManager" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 
 module.exports = {
